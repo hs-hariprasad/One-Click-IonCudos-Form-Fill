@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>One Click Feedback</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      width: 300px;
+      background: #0f1117;
+      color: #e2e8f0;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid #1e293b;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6, #06b6d4);
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 1px;
+    }
+
+    /* Body */
+    .body {
+      padding: 20px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #475569;
+      margin-bottom: 12px;
+    }
+
+    /* Rating options */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      background: #1e293b;
+      border: 1.5px solid #334155;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      width: 100%;
+      text-align: left;
+      color: #94a3b8;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-btn:hover {
+      border-color: #6366f1;
+      color: #e2e8f0;
+      background: #1e293b;
+      transform: translateX(2px);
+    }
+
+    .option-btn.selected {
+      border-color: #6366f1;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+      color: #e2e8f0;
+    }
+
+    .option-btn.selected::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #6366f1, #8b5cf6);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .option-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #475569;
+      flex-shrink: 0;
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option-btn.selected .option-dot {
+      border-color: #6366f1;
+      background: #6366f1;
+    }
+
+    .option-btn.selected .option-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    .option-emoji {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .option-text {
+      flex: 1;
+    }
+
+    /* Fill button */
+    .fill-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fill-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    }
+
+    .fill-btn:active {
+      transform: translateY(0);
+    }
+
+    .fill-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Status */
+    .status {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .status.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .status.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: #1e293b;
+      margin: 0 0 18px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo-row">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="title">One Click Feedback</div>
+        <div class="subtitle">Auto-fill all questions instantly</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="section-label">Select Rating for All Questions</div>
+
+    <div class="options-grid" id="options">
+
+      <button class="option-btn" data-value="Excellent" id="opt-excellent">
+        <span class="option-dot"></span>
+        <span class="option-emoji">🌟</span>
+        <span class="option-text">Excellent</span>
+      </button>
+
+      <button class="option-btn" data-value="Very Good" id="opt-verygood">
+        <span class="option-dot"></span>
+        <span class="option-emoji">😊</span>
+        <span class="option-text">Very Good</span>
+      </button>
+
+      <button class="option-btn" data-value="Good" id="opt-good">
+        <span class="option-dot"></span>
+        <span class="option-emoji">👍</span>
+        <span class="option-text">Good</span>
+      </button>
+
+      <button class="option-btn" data-value="Fair" id="opt-fair">
+        <span class="option-dot"></span>
+        <span class="option-emoji">😐</span>
+        <span class="option-text">Fair</span>
+      </button>
+
+      <button class="option-btn" data-value="Poor" id="opt-poor">
+        <span class="option-dot"></span>
+        <span class="option-emoji">👎</span>
+        <span class="option-text">Poor</span>
+      </button>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="fill-btn" id="fillBtn" disabled>
+      Fill All Questions
+    </button>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
